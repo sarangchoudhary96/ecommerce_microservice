@@ -1,6 +1,7 @@
 import express from "express";
 import config from "./src/config";
-import tokenValidator from "./src/tokenValidator";
+import tokenValidator from "./src/utils/tokenValidator";
+import routes from "./src/routes/routes";
 
 const app = express();
 
@@ -12,8 +13,10 @@ app.use("*", (req, res, next) => {
 });
 
 app.get("/", (req, res) => {
-  res.send(`server working fine`);
+  res.send(`server working fine`); // just to check gateway is working
 });
+
+app.use("/", routes);
 
 app.listen(config.port, (err) => {
   if (err) {
