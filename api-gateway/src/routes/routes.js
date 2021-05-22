@@ -1,17 +1,44 @@
 import express from "express";
 import registry from "./registry.json";
 import _ from "lodash";
-import constants from "../../constants"; //remove
+import { getThresholdValue } from "../utils/circuitBreaker";
 
 const router = express.Router();
 
+export const updateThresholdValue = (
+  redisConnection,
+  serviceName,
+  threshold
+) => {
+  const keyName = circuitBreakerCacheKey(serviceName);
+  const updateInRedis = promisify(redisConnection.update).bind(redisConnection);
+  return await updateInRedis(keyName, threshold);
+};
+
 router.all("/:apiName/:path", async (req, res) => {
-  const service = registry.services[req.params.apiName];
+  const { apiName: serviceName, path } = req.params;
+  const service = registry.services[serviceName];
+  const { redisConnection } = res.locals;
+
   if (service) {
-    const endPoint = constants[_.get(service, "endPoint", "")]; //remove
-    console.log(endPoint + req.params.path); //remove
-    const params = { path: req.params.path };
+    const params = { path };
     const response = _.get(service, "interceptor")(req, params);
+
+    if (!response) {
+      const thresholdValue = await getThresholdValue(
+        redisConnection,
+        serviceName
+      );
+
+      await updateThresholdValue(
+        redisConnection,
+        serviceName,
+        thresholdValue + 1
+      );
+
+      redis.send(`${serviceName} service is down`);
+    }
+
     res.send(response);
   } else {
     res.send("API does not exist");

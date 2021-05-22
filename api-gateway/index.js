@@ -1,7 +1,10 @@
 import express from "express";
 import config from "./src/config";
 import tokenValidator from "./src/utils/tokenValidator";
+import circuitBreaker from "./src/utils/circuitBreaker";
 import routes from "./src/routes/routes";
+import upgradeResponse from "./src/utils/responseConstructor";
+import redisClient from "./src/client";
 
 const app = express();
 
@@ -10,6 +13,12 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("*", (req, res, next) => {
   tokenValidator(req, res, next);
+});
+
+upgradeResponse(app, redisClient());
+
+app.use("*", (req, res, next) => {
+  circuitBreaker(req, res, next);
 });
 
 app.get("/", (req, res) => {
