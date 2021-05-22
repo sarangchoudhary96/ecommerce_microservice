@@ -1,3 +1,3 @@
 # ecommerce_microservice
 
-![Screenshot](https://user-images.githubusercontent.com/42025130/118379534-c1a0f480-b5f8-11eb-8f31-fec3abf99c23.jpeg)
+![Screenshot](https://user-images.githubusercontent.com/42025130/119238066-eb5c9d00-bb5d-11eb-9d2f-595ee14f4e1c.jpeg)

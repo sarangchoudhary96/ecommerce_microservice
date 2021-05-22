@@ -1,11 +1,13 @@
 import express from "express";
 import registry from "./registry.json";
 import _ from "lodash";
+import config from "../config";
 import { getThresholdValue } from "../utils/circuitBreaker";
+const { circuitBreakerCacheKey } = config;
 
 const router = express.Router();
 
-export const updateThresholdValue = (
+export const updateThresholdValue = async (
   redisConnection,
   serviceName,
   threshold

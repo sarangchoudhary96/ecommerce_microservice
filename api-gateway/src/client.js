@@ -1,8 +1,9 @@
 import redis from "redis";
+import config from "../src/config";
+const { redisConfig } = config;
 
 export default () =>
   redis.createClient({
-    port: process.env.REDIS_PORT,
-    host: process.env.REDIS_HOST,
-    password: process.env.REDIS_PASS,
+    port: redisConfig.PORT,
+    host: redisConfig.HOST,
   });
