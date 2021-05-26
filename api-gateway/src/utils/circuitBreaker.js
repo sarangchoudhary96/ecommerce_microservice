@@ -1,5 +1,6 @@
 import { promisify } from "util";
 import config from "../config";
+import { InternalServerError } from "./errors";
 const { circuitBreakerCacheKey, circuitBreakerThresholdValues } = config;
 
 export const getThresholdValue = async (redisConnection, serviceName) => {
@@ -8,14 +9,14 @@ export const getThresholdValue = async (redisConnection, serviceName) => {
   return await getFromRedis(keyName);
 };
 
-export default async (req, res, next) => {
+export default (params) => async (req, res, next) => {
   const { redisConnection } = res.locals;
   const serviceName = req.originalUrl.split("/")[1];
   const thresholdValue = await getThresholdValue(redisConnection, serviceName);
-  console.log(thresholdValue);
-
   if (thresholdValue > circuitBreakerThresholdValues[serviceName]) {
-    return;
+    throw new InternalServerError(
+      `${serviceName} service is down. we're working on it`
+    );
   }
   next();
 };

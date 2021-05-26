@@ -1,6 +1,6 @@
 import { databaseServiceInterceptor } from "./interceptor";
 
-export default (req, _, next) => {
+export default (params) => (req, _, next) => {
   const token = req.headers.token || req.query.token;
 
   //   if (!token) {
