@@ -11,7 +11,7 @@ export const getThresholdValue = async (redisConnection, serviceName) => {
 
 export default (params) => async (req, res, next) => {
   const { redisConnection } = res.locals;
-  const serviceName = req.originalUrl.split("/")[1];
+  const serviceName = req.originalUrl.split("/")[2];
   const thresholdValue = await getThresholdValue(redisConnection, serviceName);
   if (thresholdValue > circuitBreakerThresholdValues[serviceName]) {
     throw new InternalServerError(

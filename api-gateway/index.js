@@ -38,6 +38,11 @@ app.get("/", (req, res) => {
 
 app.use("/", routes);
 
+app.use((req, res, next) => {
+  req.app.set("originalUrl", req.originalUrl);
+  res.redirect("/api");
+});
+
 app.use(
   InternalServerErrorResolver,
   NoDataErrorResolver,

@@ -34,10 +34,19 @@ export const updateThresholdValue = async (
   return await updateInRedis(keyName, threshold.toString());
 };
 
+const getServiceAndPathName = ({ endpoint }) => {
+  const endpointParts = endpoint.split("/");
+  const serviceName = endpointParts[2];
+  const path = endpointParts.splice(2).join("/");
+  return { serviceName, path };
+};
+
 router.all(
-  "/:apiName/:path",
+  "/api",
   asyncHandler(async (req, res) => {
-    const { apiName: serviceName, path } = req.params;
+    const { serviceName, path } = getServiceAndPathName({
+      endpoint: req.app.get("originalUrl"),
+    });
     const service = registry.services[serviceName];
     const { redisConnection } = res.locals;
 
