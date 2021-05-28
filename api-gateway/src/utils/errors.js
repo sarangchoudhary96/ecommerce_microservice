@@ -110,7 +110,7 @@ export const UnauthorisedErrorResolver = (err, req, res, next) => {
   next(err);
 };
 
-export class unknownRouteError extends Error {
+export class UnknownRouteError extends Error {
   constructor(msg, errors) {
     super();
     this.message = msg || "Unauthorised";
@@ -119,7 +119,7 @@ export class unknownRouteError extends Error {
 }
 
 export const unknownRouteErrorResolver = (err, req, res, next) => {
-  if (err instanceof unknownRouteError) {
+  if (err instanceof UnknownRouteError) {
     res.create(err.errors).notFound(err.message).send();
     return;
   }

@@ -3,7 +3,7 @@ import express from "express";
 import registry from "./registry.json";
 import config from "../config";
 import { getThresholdValue } from "../utils/circuitBreaker";
-import { InternalServerError, unknownRouteError } from "../utils/errors";
+import { InternalServerError, UnknownRouteError } from "../utils/errors";
 import { promisify } from "util";
 import asyncHandler from "../utils/errorWrapper";
 import {
@@ -67,7 +67,7 @@ router.all(
         .success()
         .send();
     } else {
-      throw new unknownRouteError("Invalid Route");
+      throw new UnknownRouteError("Invalid Route");
     }
   })
 );
