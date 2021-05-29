@@ -51,10 +51,12 @@ router.all(
     const { redisConnection } = res.locals;
 
     if (service) {
-      const params = { path };
-      const response = interceptor[_.get(service, "interceptor")](req, params);
+      const response = await interceptor[_.get(service, "interceptor")](
+        req,
+        path
+      );
 
-      if (!response) {
+      if (!response.successMessage) {
         const thresholdValue = await getThresholdValue(
           redisConnection,
           serviceName
@@ -72,7 +74,7 @@ router.all(
       }
 
       res
-        .create(...response)
+        .create({ ...response.data })
         .success()
         .send();
     } else {

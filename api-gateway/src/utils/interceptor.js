@@ -1,3 +1,4 @@
+import fetch from "node-fetch";
 import constants from "../../constants";
 import _ from "lodash";
 const {
@@ -8,11 +9,11 @@ const {
 } = constants;
 
 const Interceptor = (service) => (req, params) => {
-  const { method, headers } = req;
+  const { method, body } = req;
   return fetch(service + params, {
     method,
-    headers,
-    body: JSON.stringify(req.body),
+    headers: { "Content-Type": "application/json" },
+    ...(!_.isEmpty(body) && { body: JSON.stringify(body) }),
   })
     .then((response) => response.json())
     .then((response) => {

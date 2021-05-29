@@ -11,11 +11,15 @@ import {
   UnauthorisedErrorResolver,
   unknownRouteErrorResolver,
 } from "./src/utils/error";
+import config from "./config";
+import upgradeResponse from "./src/utils/responseConstructor";
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+upgradeResponse(app);
 
 app.use("/auth/v1", v1routes);
 app.use("/auth/v2", v2routes); // for upgraded version APIs

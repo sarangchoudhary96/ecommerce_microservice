@@ -104,7 +104,7 @@ class Response {
   }
 }
 
-export default (app, redisConnect) => {
+export default (app) => {
   return app.use((_, res, next) => {
     res.create = (data) => {
       const response = new Response(data);
