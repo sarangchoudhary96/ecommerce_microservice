@@ -1,15 +1,18 @@
 import Sequelize from "sequelize";
 
-const Visitor = (seq) =>
+const UserContact = (seq) =>
   seq.define(
-    "visitor",
+    "user_contact",
     {
       id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },
-      token: Sequelize.STRING,
+      name: Sequelize.STRING,
+      user_id: Sequelize.INTEGER,
+      contact_number: Sequelize.STRING,
+      is_verified: Sequelize.INTEGER,
     },
     {
       freezeTableName: true,
@@ -19,4 +22,4 @@ const Visitor = (seq) =>
     }
   );
 
-export default Visitor;
+export default UserContact;

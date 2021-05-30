@@ -1,4 +1,5 @@
 import express from "express";
+import sequelize from "./dbDriver";
 import config from "./config";
 import upgradeResponse from "./src/utils/responseConstructor";
 import {
@@ -13,18 +14,27 @@ import {
 } from "./src/utils/errors";
 import asyncHandler from "./src/utils/errorWrapper";
 import resolvers from "./src/resolvers";
+import models from "./src/models";
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const builtModels = models(sequelize);
+
 upgradeResponse(app);
 
 app.post(
   "/db",
   asyncHandler((req, res) => {
-    const data = resolvers.Query[req.query.query_name]({ params: req.body });
+    const data = resolvers.Query[req.query.query_name](
+      { sequelize },
+      {
+        params: req.body,
+        models: builtModels,
+      }
+    );
     res.json(data);
   })
 );
