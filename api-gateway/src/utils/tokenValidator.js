@@ -13,9 +13,9 @@ export default (params) => async (req, __, next) => {
   };
   const tokenData = await databaseServiceInterceptor(req, "db");
 
-  if (_.isEmpty(tokenData)) {
-    throw new InvalidTokenError("Invalid Token");
-  }
+  // if (_.isEmpty(tokenData)) {
+  //   throw new InvalidTokenError("Invalid Token");
+  // }
 
   req.context = tokenData;
 

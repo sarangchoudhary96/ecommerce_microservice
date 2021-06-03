@@ -18,14 +18,14 @@ export default new Sequelize("ecommerce", "root", "sarang", {
 });
 
 // CREATE TABLE visitor (
-//     id INT(11) PRIMARY KEY,
+//     id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
 //     token VARCHAR(255),
 //     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 //     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 // );
 
 // CREATE TABLE `user` (
-//     id INT(11) PRIMARY KEY,
+//     id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
 //     `name` VARCHAR(255),
 //     username VARCHAR(255),
 //     `password` VARCHAR(255),
@@ -36,7 +36,7 @@ export default new Sequelize("ecommerce", "root", "sarang", {
 // );
 
 // CREATE TABLE user_session (
-//     id INT(11) PRIMARY KEY,
+//     id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
 //     user_id INT(11),
 //     visitor_id INT(11),
 //     FOREIGN KEY (visitor_id)
@@ -48,7 +48,7 @@ export default new Sequelize("ecommerce", "root", "sarang", {
 // );
 
 // CREATE TABLE user_email (
-//     id INT(11) PRIMARY KEY,
+//     id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
 //     user_id INT(11),
 //     email VARCHAR(255),
 //     is_verified INT(6),
@@ -59,7 +59,7 @@ export default new Sequelize("ecommerce", "root", "sarang", {
 // );
 
 // CREATE TABLE user_contact (
-//     id INT(11) PRIMARY KEY,
+//     id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
 //     user_id INT(11),
 //     contact_number VARCHAR(11),
 //     is_verified INT(6),
