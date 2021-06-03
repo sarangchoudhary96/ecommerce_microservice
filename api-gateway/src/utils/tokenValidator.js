@@ -1,19 +1,23 @@
 import { databaseServiceInterceptor } from "./interceptor";
+import { InvalidTokenError } from "./errors";
+import _ from "lodash";
 
-export default (params) => (req, _, next) => {
+export default (params) => async (req, __, next) => {
   const token = req.headers.token || req.query.token;
+  if (!token) {
+    throw new InvalidTokenError("Token is required");
+  }
+  req.body = {
+    query_name: "fetchTokenData",
+    token,
+  };
+  const tokenData = await databaseServiceInterceptor(req, "db");
 
-  //   if (!token) {
-  //     throw new Error("Unauthenticated Request");
-  //   }
-  // hit database service with token;
-  //   const tokenData = getTokenData(token);
+  if (_.isEmpty(tokenData)) {
+    throw new InvalidTokenError("Invalid Token");
+  }
 
-  //   if (!tokenData) {
-  //     throw new Error("Invalid Token");
-  //   }
-
-  //   req.context = tokenData;
+  req.context = tokenData;
 
   next();
 };

@@ -36,12 +36,14 @@ app.get("/", (req, res) => {
   res.send(`server working fine`); // just to check gateway is working
 });
 
-app.use("/", routes);
+// const router = express.Router({ strict: true });
 
 app.use((req, res, next) => {
-  req.app.set("originalUrl", req.originalUrl);
-  res.redirect("/api");
+  req.url = "/api";
+  next("route");
 });
+
+app.use("/", routes);
 
 app.use(
   InternalServerErrorResolver,

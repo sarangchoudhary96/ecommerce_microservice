@@ -66,10 +66,7 @@ export class InvalidTokenError extends Error {
 
 export const InvalidTokenErrorResolver = (err, req, res, next) => {
   if (err instanceof InvalidTokenError) {
-    res
-      .create(err.errors)
-      .invalidToken("Invalid Token: " + err.message, 498)
-      .send();
+    res.create(err.errors).invalidToken(err.message, 498).send();
     return;
   }
   next(err);

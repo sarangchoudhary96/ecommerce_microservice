@@ -23,4 +23,11 @@ const User = (seq) =>
     }
   );
 
+export const makeAssociations = (models) => {
+  const { UserModel, UserSessionModel } = models;
+  UserModel.hasOne(UserSessionModel, {
+    foreignKey: "user_id",
+  });
+};
+
 export default User;

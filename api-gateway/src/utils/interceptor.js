@@ -11,7 +11,7 @@ const {
 const Interceptor = (service) => (req, params) => {
   const { method, body } = req;
   return fetch(service + params, {
-    method,
+    method: "POST",
     headers: { "Content-Type": "application/json" },
     ...(!_.isEmpty(body) && { body: JSON.stringify(body) }),
   })

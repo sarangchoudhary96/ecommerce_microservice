@@ -25,10 +25,12 @@ const builtModels = models(sequelize);
 
 upgradeResponse(app);
 
+require("./src/relations").buildDBAssociations(builtModels);
+
 app.post(
   "/db",
-  asyncHandler((req, res) => {
-    const data = resolvers.Query[req.query.query_name](
+  asyncHandler(async (req, res) => {
+    const data = await resolvers.Query[req.body.query_name](
       { sequelize },
       {
         params: req.body,

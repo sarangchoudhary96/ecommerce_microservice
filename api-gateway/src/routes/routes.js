@@ -45,7 +45,7 @@ router.all(
   "/api",
   asyncHandler(async (req, res) => {
     const { serviceName, path } = getServiceAndPathName({
-      endpoint: req.app.get("originalUrl"),
+      endpoint: req.originalUrl,
     });
     const service = registry.services[serviceName];
     const { redisConnection } = res.locals;

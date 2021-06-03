@@ -125,3 +125,19 @@ export const unknownRouteErrorResolver = (err, req, res, next) => {
   }
   next(err);
 };
+
+export class QueryIncompletionError extends Error {
+  constructor(msg, errors) {
+    super();
+    this.message = msg || "Internal Server Error";
+    this.errors = errors;
+  }
+}
+
+export const QueryIncompletionErrorResolver = (err, req, res, next) => {
+  if (err instanceof QueryIncompletionError) {
+    res.create(err.errors).internalerror(err, 500).send();
+    return;
+  }
+  next(err);
+};
