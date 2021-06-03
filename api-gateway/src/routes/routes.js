@@ -73,10 +73,7 @@ router.all(
         );
       }
 
-      res
-        .create({ ...response.data })
-        .success()
-        .send();
+      res.create(response.data).success().send();
     } else {
       throw new UnknownRouteError("Invalid Route");
     }

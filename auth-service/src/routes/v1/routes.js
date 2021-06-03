@@ -2,6 +2,7 @@ import express from "express";
 import { v1 as uuidv1 } from "uuid";
 import { databaseServiceInterceptor } from "../../utils/interceptor";
 import asyncHandler from "../../utils/errorWrapper";
+import _ from "lodash";
 
 const router = express.Router();
 
@@ -29,7 +30,8 @@ router.post(
       query_name: "deviceRegister",
     };
     const response = await databaseServiceInterceptor(req, "db");
-    res.create(response).success().send();
+    const token = _.get(response, "token");
+    res.create({ token }).success().send();
   })
 );
 
