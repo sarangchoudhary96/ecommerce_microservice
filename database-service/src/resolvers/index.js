@@ -1,13 +1,7 @@
 import merge from "deepmerge";
 
-import loginResolver from "./authResolvers/login.resolver";
-import productResolver from "./productResolver/products.resolvers";
-import UserResolver from "./apiGatewayResolvers/user.resolver";
-import VisitorResolver from "./authResolvers/visitor.resolver";
+import productResolver from "./products.resolvers";
+import UserResolver from "./user.resolver";
+import VisitorResolver from "./visitor.resolver";
 
-export default merge.all([
-  loginResolver,
-  productResolver,
-  UserResolver,
-  VisitorResolver,
-]);
+export default merge.all([productResolver, UserResolver, VisitorResolver]);

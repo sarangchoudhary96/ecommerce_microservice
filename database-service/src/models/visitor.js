@@ -19,4 +19,11 @@ const Visitor = (seq) =>
     }
   );
 
+export const makeAssociations = (models) => {
+  const { UserSessionModel, VisitorModel } = models;
+  VisitorModel.hasOne(UserSessionModel, {
+    foreignKey: "visitor_id",
+  });
+};
+
 export default Visitor;

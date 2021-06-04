@@ -52,7 +52,7 @@ router.all(
 
     if (service) {
       const response = await interceptor[_.get(service, "interceptor")](
-        req,
+        { ...req.body },
         path
       );
 

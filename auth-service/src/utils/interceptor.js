@@ -3,12 +3,11 @@ import constants from "../../constants";
 import _ from "lodash";
 const { DATABASE_SERVICE_ENDPOINT } = constants;
 
-const Interceptor = (service) => (req, params) => {
-  const { method, body } = req;
-  return fetch(service + params, {
+const Interceptor = (service) => (params, path) => {
+  return fetch(service + path, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    ...(!_.isEmpty(body) && { body: JSON.stringify(body) }),
+    ...(!_.isEmpty(params) && { body: JSON.stringify(params) }),
   })
     .then((response) => response.json())
     .then((response) => {
