@@ -52,7 +52,7 @@ router.all(
 
     if (service) {
       const response = await interceptor[_.get(service, "interceptor")](
-        { ...req.body },
+        { ...req.body, ...req.context },
         path
       );
 
@@ -73,7 +73,7 @@ router.all(
         );
       }
 
-      res.create(response.data).success().send();
+      res.create(response).send();
     } else {
       throw new UnknownRouteError("Invalid Route");
     }

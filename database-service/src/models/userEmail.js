@@ -9,7 +9,6 @@ const UserEmail = (seq) =>
         autoIncrement: true,
         primaryKey: true,
       },
-      name: Sequelize.STRING,
       user_id: Sequelize.INTEGER,
       email: Sequelize.STRING,
       is_verified: Sequelize.INTEGER,

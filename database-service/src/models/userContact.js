@@ -9,7 +9,6 @@ const UserContact = (seq) =>
         autoIncrement: true,
         primaryKey: true,
       },
-      name: Sequelize.STRING,
       user_id: Sequelize.INTEGER,
       contact_number: Sequelize.STRING,
       is_verified: Sequelize.INTEGER,

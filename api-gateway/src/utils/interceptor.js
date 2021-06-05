@@ -1,6 +1,7 @@
 import fetch from "node-fetch";
 import constants from "../../constants";
 import _ from "lodash";
+import { MessageError } from "../utils/errors";
 const {
   AUTH_SERVICE_ENDPOINT,
   ORDER_SERVICE_ENDPOINT,
@@ -16,8 +17,8 @@ const Interceptor = (service) => (params, path) => {
   })
     .then((response) => response.json())
     .then((response) => {
-      if (_.get(response, "errors")) {
-        throw new Error("error occured", error);
+      if (_.get(response, "errorMessage")) {
+        throw new MessageError(_.get(response, "errorMessage"));
       }
       return response;
     });

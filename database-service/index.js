@@ -11,6 +11,7 @@ import {
   BadRequestErrorResolver,
   UnauthorisedErrorResolver,
   unknownRouteErrorResolver,
+  QueryIncompletionErrorResolver,
 } from "./src/utils/errors";
 import asyncHandler from "./src/utils/errorWrapper";
 import resolvers from "./src/resolvers";
@@ -60,7 +61,8 @@ app.use(
   InvalidTokenErrorResolver,
   BadRequestErrorResolver,
   UnauthorisedErrorResolver,
-  unknownRouteErrorResolver
+  unknownRouteErrorResolver,
+  QueryIncompletionErrorResolver
 );
 
 app.listen(config.port, (err) => {
