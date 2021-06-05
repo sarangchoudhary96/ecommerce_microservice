@@ -11,7 +11,7 @@ export default (params) => async (req, __, next) => {
     query_name: "fetchTokenData",
     token,
   };
-  const tokenData = await databaseServiceInterceptor(params, "db");
+  const tokenData = await databaseServiceInterceptor(params);
 
   if (_.isEmpty(tokenData)) {
     throw new InvalidTokenError("Invalid Token");

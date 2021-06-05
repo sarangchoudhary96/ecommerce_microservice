@@ -32,6 +32,9 @@ class Response {
     if (!this.res.json) {
       throw new Error("Cannot Call send Response before create");
     }
+    if (this.data) {
+      this.res.json(_.pick(this.data, this.eligibleProperties));
+    }
     this.res.json(_.pick(this, this.eligibleProperties));
   }
 

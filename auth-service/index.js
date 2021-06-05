@@ -40,5 +40,5 @@ app.listen(config.port, (err) => {
     console.log("something went wrong", err);
     return;
   }
-  console.log("Server started on port number", config.port);
+  console.log("Auth-Server started on port number", config.port);
 });

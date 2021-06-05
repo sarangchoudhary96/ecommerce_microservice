@@ -10,7 +10,7 @@ const {
 } = constants;
 
 const Interceptor = (service) => (params, path) => {
-  return fetch(service + path, {
+  return fetch(service + (path || "db"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     ...(!_.isEmpty(params) && { body: JSON.stringify(params) }),

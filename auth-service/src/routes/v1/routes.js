@@ -22,21 +22,15 @@ router.post(
   "/login",
   asyncHandler(async (req, res) => {
     const { username, password, id: visitor_id } = req.body;
-    const checkUserExist = await databaseServiceInterceptor(
-      {
-        query_name: "fetchUserInfo",
-        username,
-      },
-      "db"
-    );
+    const checkUserExist = await databaseServiceInterceptor({
+      query_name: "fetchUserInfo",
+      username,
+    });
 
     if (_.isEmpty(checkUserExist)) {
       throw new MessageError("Invalid Username or Password");
     }
-
-    const decryptedPassword = passwordDecrypt(checkUserExist.password);
-
-    if (password != decryptedPassword) {
+    if (passwordDecrypt(checkUserExist.password) != password) {
       throw new MessageError("Invalid Username or Password");
     }
     const params = {
@@ -75,7 +69,7 @@ router.post(
 router.post(
   "/device/register",
   asyncHandler(async (req, res) => {
-    req.body = {
+    const params = {
       token: uuidv1({
         clockseq: 0x1234,
         msecs: new Date().getTime(),
@@ -83,10 +77,22 @@ router.post(
       }),
       query_name: "deviceRegister",
     };
-    const response = await databaseServiceInterceptor(req, "db");
+    const response = await databaseServiceInterceptor(params, "db");
     const token = _.get(response, "token");
     res.create({ token }).success().send();
   })
 );
 
+router.post(
+  "/logout",
+  asyncHandler(async (req, res) => {
+    const userSessionId = _.get(req, "body.user_session.id", "");
+    const logoutResponse = await databaseServiceInterceptor({
+      id: userSessionId,
+      query_name: "deleteSession",
+    });
+
+    res.create(logoutResponse).success().send();
+  })
+);
 export default router;
