@@ -18,7 +18,10 @@ const Interceptor = (service) => (params, path) => {
     .then((response) => response.json())
     .then((response) => {
       if (_.get(response, "errorMessage")) {
-        throw new MessageError(_.get(response, "errorMessage"));
+        throw new MessageError(
+          _.get(response, "errorMessage"),
+          _.get(response, "errors")
+        );
       }
       return response;
     });

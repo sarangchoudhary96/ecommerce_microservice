@@ -6,6 +6,7 @@ import _ from "lodash";
 import { decrypt, encrypt } from "../encryption";
 import config from "../../../config";
 import { MessageError } from "../../utils/error";
+import loginValidator from "../../validators/login.validator";
 
 const secret = _.get(config, "passwordEncryption.secret", "");
 const router = express.Router();
@@ -20,6 +21,7 @@ const passwordEncrypt = (password) => {
 
 router.post(
   "/login",
+  loginValidator,
   asyncHandler(async (req, res) => {
     const { username, password, id: visitor_id } = req.body;
     const checkUserExist = await databaseServiceInterceptor({
