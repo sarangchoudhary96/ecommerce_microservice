@@ -8,6 +8,7 @@ import config from "../../../config";
 import { MessageError } from "../../utils/error";
 import userloginValidator from "../../validators/userLogin.validator";
 import userRegisterValidator from "../../validators/userRegister.validator";
+import logoutValidator from "../../validators/logout.validator";
 
 const secret = _.get(config, "passwordEncryption.secret", "");
 const router = express.Router();
@@ -89,6 +90,7 @@ router.post(
 
 router.post(
   "/user/logout",
+  logoutValidator,
   asyncHandler(async (req, res) => {
     const userSessionId = _.get(req, "body.user_session.id", "");
     const logoutResponse = await databaseServiceInterceptor({
