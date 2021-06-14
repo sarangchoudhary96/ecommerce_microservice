@@ -16,6 +16,8 @@ import {
   unknownRouteErrorResolver,
 } from "./src/utils/errors";
 import asyncHandler from "./src/utils/errorWrapper";
+import { byPassRoutes } from "./src/utils/commonHelpers";
+import { pathToBeIgnoredForTokenValidation } from "./src/routes/routesConstants";
 
 const app = express();
 
@@ -25,15 +27,18 @@ app.use(express.urlencoded({ extended: true }));
 upgradeResponse(app, redisClient());
 
 app.use("*", (req, res, next) => {
-  asyncHandler(tokenValidator({}))(req, res, next);
+  byPassRoutes(
+    asyncHandler(tokenValidator({})),
+    pathToBeIgnoredForTokenValidation
+  )(req, res, next);
 });
 
 app.use("*", (req, res, next) => {
   asyncHandler(circuitBreaker({}))(req, res, next);
 });
 
-app.get("/", (req, res) => {
-  res.send(`server working fine`); // just to check gateway is working
+app.get("/api/apigateway", (req, res) => {
+  res.create("Gateway server working fine").success().send(); // just to check gateway is working
 });
 
 // const router = express.Router({ strict: true });

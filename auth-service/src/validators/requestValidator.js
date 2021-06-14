@@ -1,4 +1,5 @@
 import { BadRequestError } from "../utils/error";
+import _ from "lodash";
 
 const tranformToErrorsArray = (errorsObj) =>
   errorsObj.details.map((error) => error.message);
@@ -10,7 +11,7 @@ export default async (itemsToValidate, rulesForValidaton) => {
     options
   );
 
-  if (validationsResult.error === null) return true;
+  if (_.get(validationsResult, "error") === undefined) return true;
 
   throw new BadRequestError(
     "Bad Request",

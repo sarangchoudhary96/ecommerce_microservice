@@ -6,7 +6,8 @@ import _ from "lodash";
 import { decrypt, encrypt } from "../encryption";
 import config from "../../../config";
 import { MessageError } from "../../utils/error";
-import loginValidator from "../../validators/login.validator";
+import userloginValidator from "../../validators/userLogin.validator";
+import userRegisterValidator from "../../validators/userRegister.validator";
 
 const secret = _.get(config, "passwordEncryption.secret", "");
 const router = express.Router();
@@ -20,8 +21,8 @@ const passwordEncrypt = (password) => {
 };
 
 router.post(
-  "/login",
-  loginValidator,
+  "/user/login",
+  userloginValidator,
   asyncHandler(async (req, res) => {
     const { username, password, id: visitor_id } = req.body;
     const checkUserExist = await databaseServiceInterceptor({
@@ -47,7 +48,8 @@ router.post(
 );
 
 router.post(
-  "/register",
+  "/user/register",
+  userRegisterValidator,
   asyncHandler(async (req, res) => {
     const { name, username, password, gender, email, contact } = req.body;
     const encryptedPassword = passwordEncrypt(password);
@@ -86,7 +88,7 @@ router.post(
 );
 
 router.post(
-  "/logout",
+  "/user/logout",
   asyncHandler(async (req, res) => {
     const userSessionId = _.get(req, "body.user_session.id", "");
     const logoutResponse = await databaseServiceInterceptor({
