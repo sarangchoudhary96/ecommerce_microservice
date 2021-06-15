@@ -14,6 +14,7 @@ import {
   BadRequestErrorResolver,
   UnauthorisedErrorResolver,
   unknownRouteErrorResolver,
+  byPassErrorResolver,
 } from "./src/utils/errors";
 import asyncHandler from "./src/utils/errorWrapper";
 import { byPassRoutes } from "./src/utils/commonHelpers";
@@ -41,8 +42,6 @@ app.get("/api/apigateway", (req, res) => {
   res.create("Gateway server working fine").success().send(); // just to check gateway is working
 });
 
-// const router = express.Router({ strict: true });
-
 app.use((req, res, next) => {
   req.url = "/api";
   next("route");
@@ -58,7 +57,8 @@ app.use(
   InvalidTokenErrorResolver,
   BadRequestErrorResolver,
   UnauthorisedErrorResolver,
-  unknownRouteErrorResolver
+  unknownRouteErrorResolver,
+  byPassErrorResolver
 );
 
 app.listen(config.port, (err) => {

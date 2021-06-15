@@ -10,6 +10,7 @@ import {
   BadRequestErrorResolver,
   UnauthorisedErrorResolver,
   unknownRouteErrorResolver,
+  byPassErrorResolver,
 } from "./src/utils/error";
 import config from "./config";
 import upgradeResponse from "./src/utils/responseConstructor";
@@ -32,7 +33,8 @@ app.use(
   InvalidTokenErrorResolver,
   BadRequestErrorResolver,
   UnauthorisedErrorResolver,
-  unknownRouteErrorResolver
+  unknownRouteErrorResolver,
+  byPassErrorResolver
 );
 
 app.listen(config.port, (err) => {

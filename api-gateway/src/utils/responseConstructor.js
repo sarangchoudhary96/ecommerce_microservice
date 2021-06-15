@@ -32,9 +32,6 @@ class Response {
     if (!this.res.json) {
       throw new Error("Cannot Call send Response before create");
     }
-    if (this.data && typeof this.data == "object") {
-      this.res.json(_.pick(this.data, this.eligibleProperties));
-    }
     this.res.json(_.pick(this, this.eligibleProperties));
   }
 
@@ -102,6 +99,15 @@ class Response {
     this.res.status(401);
     this.errorMessage = errorMsg || "Not Allowed";
     this.errorCode = 401;
+    delete this.data;
+    return this;
+  }
+
+  byPassed(errorMsg, errorCode, errors) {
+    this.res.status(errorCode);
+    this.errorMessage = errorMsg;
+    this.errorCode = errorCode;
+    this.errors = errors || [];
     delete this.data;
     return this;
   }

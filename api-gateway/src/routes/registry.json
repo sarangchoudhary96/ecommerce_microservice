@@ -1,13 +1,7 @@
 {
   "services": {
-    "auth": {
-      "apiName": "auth",
-      "interceptor": "authServiceInterceptor"
-    },
-    "order": {
-      "apiName": "order",
-      "interceptor": "orderServiceInterceptor"
-    },
+    "auth": { "apiName": "auth", "interceptor": "authServiceInterceptor" },
+    "order": { "apiName": "order", "interceptor": "orderServiceInterceptor" },
     "product": {
       "apiName": "product",
       "interceptor": "productServiceInterceptor"

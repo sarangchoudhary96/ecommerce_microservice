@@ -4,7 +4,7 @@ import _ from "lodash";
 
 export default async (req, __, next) => {
   const itemsToValidate = {
-    session_id: _.get(req, "body.user_session.id", ""),
+    session_id: Number(_.get(req, "body.user_session.id", "")),
   };
 
   const rulesForValidation = Joi.object({

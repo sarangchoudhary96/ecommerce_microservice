@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 import constants from "../../constants";
 import _ from "lodash";
-import { MessageError } from "../utils/error";
+import { byPassError } from "../utils/error";
 const { DATABASE_SERVICE_ENDPOINT } = constants;
 
 const Interceptor = (service) => (params, path) => {
@@ -12,8 +12,12 @@ const Interceptor = (service) => (params, path) => {
   })
     .then((response) => response.json())
     .then((response) => {
-      if (_.get(response, "errorMessage")) {
-        throw new MessageError(_.get(response, "errorMessage.message"));
+      if (_.get(response, "errorMessage") && _.get(response, "errors")) {
+        throw new byPassError(
+          _.get(response, "errorMessage.message"),
+          _.get(response, "error_code"),
+          _.get(response, "errors")
+        );
       }
       return response;
     })
@@ -22,6 +26,9 @@ const Interceptor = (service) => (params, path) => {
         throw new Error("error occured", error);
       }
       return response;
+    })
+    .catch((err) => {
+      return { service_down: "database" };
     });
 };
 

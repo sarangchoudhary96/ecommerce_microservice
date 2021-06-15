@@ -102,6 +102,15 @@ class Response {
     delete this.data;
     return this;
   }
+
+  byPassed(errorMsg, errorCode, errors) {
+    this.res.status(errorCode);
+    this.errorMessage = errorMsg;
+    this.errorCode = errorCode;
+    this.errors = errors || [];
+    delete this.data;
+    return this;
+  }
 }
 
 export default (app) => {

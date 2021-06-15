@@ -1,4 +1,6 @@
 import _ from "lodash";
+import fs from "fs";
+import path from "path";
 import express from "express";
 import registry from "./registry.json";
 import config from "../config";
@@ -41,6 +43,23 @@ const getServiceAndPathName = ({ endpoint }) => {
   return { serviceName, path };
 };
 
+const updateRegistry = ({ serviceName }) => {
+  const registry = fs.readFileSync(path.resolve(__dirname, "./registry.json"));
+  const registryData = JSON.parse(registry);
+  if (_.get(registryData, "service_down.name")) {
+    return;
+  }
+  fs.writeFileSync(
+    path.resolve(__dirname, "./registry.json"),
+    JSON.stringify({
+      ...registryData,
+      service_down: { name: serviceName },
+    }),
+    "utf8"
+  );
+  return true;
+};
+
 router.all(
   "/api",
   asyncHandler(async (req, res) => {
@@ -56,7 +75,7 @@ router.all(
         path
       );
 
-      if (!response.successMessage) {
+      if (!_.get(response, "successMessage") || _.get(response, 'data.service_down')) {
         const thresholdValue = await getThresholdValue(
           redisConnection,
           serviceName
@@ -64,16 +83,21 @@ router.all(
 
         await updateThresholdValue(
           redisConnection,
-          serviceName,
+          _.get(response, "data.service_down") || serviceName,
           Number(thresholdValue) + 1
         );
 
+        updateRegistry({
+          serviceName: _.get(response, "data.service_down") || serviceName,
+        });
+
         throw new InternalServerError(
-          `${serviceName} service is down. we're working on it`
+          `${
+            _.get(response, "data.service_down") || serviceName
+          } service is down. we're working on it`
         );
       }
-
-      res.create(response).send();
+      res.create(_.get(response, "data")).success().send();
     } else {
       throw new UnknownRouteError("Invalid Route");
     }

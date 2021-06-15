@@ -42,7 +42,7 @@ router.post(
       user_id: checkUserExist.id,
       visitor_id,
     };
-    const response = await databaseServiceInterceptor(params, "db");
+    const response = await databaseServiceInterceptor(params);
 
     res.create(response).success().send();
   })
@@ -65,7 +65,7 @@ router.post(
       },
       contactData: { email, contact },
     };
-    const response = await databaseServiceInterceptor(params, "db");
+    const response = await databaseServiceInterceptor(params);
 
     res.create(response).success().send();
   })
@@ -82,7 +82,7 @@ router.post(
       }),
       query_name: "deviceRegister",
     };
-    const response = await databaseServiceInterceptor(params, "db");
+    const response = await databaseServiceInterceptor(params);
     const token = _.get(response, "token");
     res.create({ token }).success().send();
   })
@@ -92,6 +92,9 @@ router.post(
   "/user/logout",
   logoutValidator,
   asyncHandler(async (req, res) => {
+    if (_.get(req, "body.visitor") && !_.get(req, "body.user_session.id", "")) {
+      throw new MessageError("user is not login");
+    }
     const userSessionId = _.get(req, "body.user_session.id", "");
     const logoutResponse = await databaseServiceInterceptor({
       id: userSessionId,
