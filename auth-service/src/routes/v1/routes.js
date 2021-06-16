@@ -9,6 +9,7 @@ import { MessageError } from "../../utils/error";
 import userloginValidator from "../../validators/userLogin.validator";
 import userRegisterValidator from "../../validators/userRegister.validator";
 import logoutValidator from "../../validators/logout.validator";
+import { publishEmail } from "../../utils/amqpPublisher";
 
 const secret = _.get(config, "passwordEncryption.secret", "");
 const router = express.Router();
@@ -95,12 +96,13 @@ router.post(
     if (_.get(req, "body.visitor") && !_.get(req, "body.user_session.id", "")) {
       throw new MessageError("user is not login");
     }
+    const amqp = res.create().amqp;
     const userSessionId = _.get(req, "body.user_session.id", "");
     const logoutResponse = await databaseServiceInterceptor({
       id: userSessionId,
       query_name: "deleteSession",
     });
-
+    // await publishEmail(amqp, emailData);
     res.create(logoutResponse).success().send();
   })
 );

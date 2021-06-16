@@ -113,11 +113,12 @@ class Response {
   }
 }
 
-export default (app) => {
+export default (app, amqpConnection) => {
   return app.use((_, res, next) => {
     res.create = (data) => {
       const response = new Response(data);
       response.captureOrignalResponse(res);
+      response.amqp = amqpConnection;
       return response;
     };
     next();
