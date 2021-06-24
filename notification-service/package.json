@@ -3,12 +3,20 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "start": "nodemon --exec babel-node index.js"
+  },
   "dependencies": {
-    "@babel/core": "^7.14.3",
+    "@babel/core": "^7.14.2",
     "@babel/node": "^7.14.2",
     "@babel/preset-env": "^7.14.2",
+    "amqplib": "^0.8.0",
     "express": "^4.17.1",
     "lodash": "^4.17.21",
+    "nodemailer": "^6.6.1",
     "nodemon": "^2.0.7"
+  },
+  "devDependencies": {
+    "eslint": "^7.29.0"
   }
 }
