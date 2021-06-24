@@ -93,16 +93,20 @@ router.post(
   "/user/logout",
   logoutValidator,
   asyncHandler(async (req, res) => {
-    if (_.get(req, "body.visitor") && !_.get(req, "body.user_session.id", "")) {
-      throw new MessageError("user is not login");
-    }
     const amqp = res.create().amqp;
     const userSessionId = _.get(req, "body.user_session.id", "");
     const logoutResponse = await databaseServiceInterceptor({
       id: userSessionId,
       query_name: "deleteSession",
     });
-    // await publishEmail(amqp, emailData);
+    const emailData = {
+      to: ["sarangchoudhary1996@gmail.com"],
+      from: "plenty100000@gmail.com",
+      from_name: "ecommerce-app",
+      text: "your first email",
+      subject: "logout successful",
+    };
+    await publishEmail(amqp, emailData);
     res.create(logoutResponse).success().send();
   })
 );

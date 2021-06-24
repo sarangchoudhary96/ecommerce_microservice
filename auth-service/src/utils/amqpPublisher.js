@@ -1,5 +1,5 @@
 import _ from "lodash";
-import config from "../../config";
+import { config } from "../../config";
 import { emailBodyValidator } from "./amqpSchemaValidator";
 
 const { QUEUE_EMAIL, QUEUE_SMS } = config.rabbitMQ.queues;

@@ -12,9 +12,9 @@ import {
   unknownRouteErrorResolver,
   byPassErrorResolver,
 } from "./src/utils/error";
-import config from "./config";
+import { config } from "./config";
 import upgradeResponse from "./src/utils/responseConstructor";
-import { connectToRMQ } from "./src/utils/qmqpConnection";
+import { connectToRMQ } from "./src/utils/amqpConnection";
 
 const app = express();
 
