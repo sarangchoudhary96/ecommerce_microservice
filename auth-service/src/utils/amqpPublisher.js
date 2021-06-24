@@ -21,9 +21,11 @@ const pushDataToQueue = (amqpConn, queue, exchange, data) => {
           ])
         )
         .then((_) =>
+          // eslint-disable-next-line no-undef
           channel.publish(exchange, queue, Buffer.from(JSON.stringify(data)))
         )
         .then((_) =>
+          // eslint-disable-next-line no-console
           console.log({
             message: `Data Pushed to Queue: ${queue} ::: ${JSON.stringify(
               data

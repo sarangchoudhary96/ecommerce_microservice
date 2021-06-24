@@ -63,6 +63,7 @@ app.use(
 
 app.listen(config.port, (err) => {
   if (err) {
+    /*eslint-disable*/
     console.log("something went wrong", err);
     return;
   }
