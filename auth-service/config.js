@@ -15,4 +15,32 @@ export const config = {
       EXCHANGE_EMAIL: "EMAIL_XCHANGE",
     },
   },
+  fromEmails: {
+    userRegister: {
+      from: "plenty100000@gmail.com",
+      fromName: "ecommerce_app",
+    },
+    userLogin: {
+      from: "plenty100000@gmail.com",
+      fromName: "ecommerce_app",
+    },
+    userLogout: {
+      from: "plenty100000@gmail.com",
+      fromName: "ecommerce_app",
+    },
+  },
+  emailTemplates: {
+    userRegister: {
+      subject: "User Registration",
+      text: "<h1>Your account has been successfully created</h1>",
+    },
+    userLogin: {
+      subject: "Login Alert",
+      text: "<h1>Login Successful</h1>",
+    },
+    userLogout: {
+      subject: "Logout Alert",
+      text: "<h1>Logout Successful</h1>",
+    },
+  },
 };

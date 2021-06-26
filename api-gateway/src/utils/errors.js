@@ -115,7 +115,7 @@ export class UnknownRouteError extends Error {
   }
 }
 
-export const unknownRouteErrorResolver = (err, req, res, next) => {
+export const UnknownRouteErrorResolver = (err, req, res, next) => {
   if (err instanceof UnknownRouteError) {
     res.create(err.errors).notFound(err.message).send();
     return;
@@ -123,7 +123,7 @@ export const unknownRouteErrorResolver = (err, req, res, next) => {
   next(err);
 };
 
-export class byPassError extends Error {
+export class ByPassError extends Error {
   constructor(msg, error_code, errors) {
     super();
     this.message = msg;
@@ -132,8 +132,8 @@ export class byPassError extends Error {
   }
 }
 
-export const byPassErrorResolver = (err, req, res, next) => {
-  if (err instanceof byPassError) {
+export const ByPassErrorResolver = (err, req, res, next) => {
+  if (err instanceof ByPassError) {
     res.create().byPassed(err.message, err.error_code, err.errors).send();
     return;
   }

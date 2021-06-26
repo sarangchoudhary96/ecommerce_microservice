@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import crypto from "crypto";
 import { config } from "../../config";
 const { algorithm } = config.passwordEncryption;

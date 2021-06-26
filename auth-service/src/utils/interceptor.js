@@ -21,12 +21,6 @@ const Interceptor = (service) => (params, path) => {
       }
       return response;
     })
-    .then((response) => {
-      if (_.get(response, "errors")) {
-        throw new Error("error occured", error);
-      }
-      return response;
-    })
     .catch((err) => {
       return { service_down: "database" };
     });

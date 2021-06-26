@@ -70,7 +70,10 @@ export default {
             );
           }
 
-          return { status: true };
+          return {
+            status: true,
+            user_id: _.get(checkUserExist, "dataValues.id"),
+          };
         })
         .catch((e) => {
           throw new QueryIncompletionError(e);

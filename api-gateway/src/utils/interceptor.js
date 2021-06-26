@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 import constants from "../../constants";
 import _ from "lodash";
-import { byPassError } from "../utils/errors";
+import { ByPassError } from "../utils/errors";
 const {
   AUTH_SERVICE_ENDPOINT,
   ORDER_SERVICE_ENDPOINT,
@@ -18,7 +18,7 @@ const Interceptor = (service) => (params, path) => {
     .then((response) => response.json())
     .then((response) => {
       if (_.get(response, "errorMessage") && _.get(response, "errors")) {
-        throw new byPassError(
+        throw new ByPassError(
           _.get(response, "errorMessage"),
           _.get(response, "errorCode"),
           _.get(response, "errors")
@@ -27,7 +27,7 @@ const Interceptor = (service) => (params, path) => {
       return response;
     })
     .catch((err) => {
-      console.log(err);
+      throw err;
     });
 };
 

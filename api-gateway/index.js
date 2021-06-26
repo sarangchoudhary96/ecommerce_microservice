@@ -13,8 +13,8 @@ import {
   InvalidTokenErrorResolver,
   BadRequestErrorResolver,
   UnauthorisedErrorResolver,
-  unknownRouteErrorResolver,
-  byPassErrorResolver,
+  UnknownRouteErrorResolver,
+  ByPassErrorResolver,
 } from "./src/utils/errors";
 import asyncHandler from "./src/utils/errorWrapper";
 import { byPassRoutes } from "./src/utils/commonHelpers";
@@ -57,8 +57,8 @@ app.use(
   InvalidTokenErrorResolver,
   BadRequestErrorResolver,
   UnauthorisedErrorResolver,
-  unknownRouteErrorResolver,
-  byPassErrorResolver
+  UnknownRouteErrorResolver,
+  ByPassErrorResolver
 );
 
 app.listen(config.port, (err) => {

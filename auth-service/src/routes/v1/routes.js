@@ -3,8 +3,8 @@ import { v1 as uuidv1 } from "uuid";
 import { databaseServiceInterceptor } from "../../utils/interceptor";
 import asyncHandler from "../../utils/errorWrapper";
 import _ from "lodash";
-import { decrypt, encrypt } from "../encryption";
-import config from "../../../config";
+import { decrypt, encrypt } from "../../utils/encryption";
+import { config } from "../../../config";
 import { MessageError } from "../../utils/error";
 import userloginValidator from "../../validators/userLogin.validator";
 import userRegisterValidator from "../../validators/userRegister.validator";
@@ -22,10 +22,22 @@ const passwordEncrypt = (password) => {
   return encrypt({ password, secret });
 };
 
+const sendEmailToUser = async (amqp, userEmail, emailType) => {
+  const emailData = {
+    to: [userEmail],
+    from: _.get(config, `fromEmails.${emailType}.from`),
+    from_name: _.get(config, `fromEmails.${emailType}.fromName`),
+    subject: _.get(config, `emailTemplates.${emailType}.subject`),
+    html: _.get(config, `emailTemplates.${emailType}.text`),
+  };
+  await publishEmail(amqp, emailData);
+};
+
 router.post(
   "/user/login",
   userloginValidator,
   asyncHandler(async (req, res) => {
+    const amqp = res.create().amqp;
     const { username, password, id: visitor_id } = req.body;
     const checkUserExist = await databaseServiceInterceptor({
       query_name: "fetchUserInfo",
@@ -43,9 +55,20 @@ router.post(
       user_id: checkUserExist.id,
       visitor_id,
     };
-    const response = await databaseServiceInterceptor(params);
 
-    res.create(response).success().send();
+    const [loginResponse, userEmailInfo] = await Promise.all([
+      databaseServiceInterceptor(params),
+      databaseServiceInterceptor({
+        id: _.get(checkUserExist, "id"),
+        query_name: "fetchUserEmailInfo",
+      }),
+    ]);
+
+    // send successful login email to user
+    _.get(loginResponse, "message") &&
+      (await sendEmailToUser(amqp, _.get(userEmailInfo, "email"), "userLogin"));
+
+    res.create(loginResponse).success().send();
   })
 );
 
@@ -53,6 +76,7 @@ router.post(
   "/user/register",
   userRegisterValidator,
   asyncHandler(async (req, res) => {
+    const amqp = res.create().amqp;
     const { name, username, password, gender, email, contact } = req.body;
     const encryptedPassword = passwordEncrypt(password);
     const params = {
@@ -67,8 +91,48 @@ router.post(
       contactData: { email, contact },
     };
     const response = await databaseServiceInterceptor(params);
+    const userEmailInfo = await databaseServiceInterceptor({
+      id: _.get(response, "user.id"),
+      query_name: "fetchUserEmailInfo",
+    });
+
+    // send successful registration email to user
+    _.get(response, "status") &&
+      (await sendEmailToUser(
+        amqp,
+        _.get(userEmailInfo, "email"),
+        "userRegister"
+      ));
 
     res.create(response).success().send();
+  })
+);
+
+router.post(
+  "/user/logout",
+  logoutValidator,
+  asyncHandler(async (req, res) => {
+    const amqp = res.create().amqp;
+    const userSessionId = _.get(req, "body.user_session.id", "");
+    const [logoutResponse, userEmailInfo] = await Promise.all([
+      databaseServiceInterceptor({
+        id: userSessionId,
+        query_name: "deleteSession",
+      }),
+      databaseServiceInterceptor({
+        id: _.get(req, "body.user_session.user.id"),
+        query_name: "fetchUserEmailInfo",
+      }),
+    ]);
+
+    // send successful logout email to user
+    _.get(logoutResponse, "message") &&
+      (await sendEmailToUser(
+        amqp,
+        _.get(userEmailInfo, "email"),
+        "userLogout"
+      ));
+    res.create(logoutResponse).success().send();
   })
 );
 
@@ -89,25 +153,4 @@ router.post(
   })
 );
 
-router.post(
-  "/user/logout",
-  logoutValidator,
-  asyncHandler(async (req, res) => {
-    const amqp = res.create().amqp;
-    const userSessionId = _.get(req, "body.user_session.id", "");
-    const logoutResponse = await databaseServiceInterceptor({
-      id: userSessionId,
-      query_name: "deleteSession",
-    });
-    const emailData = {
-      to: ["sarangchoudhary1996@gmail.com"],
-      from: "plenty100000@gmail.com",
-      from_name: "ecommerce-app",
-      text: "your first email",
-      subject: "logout successful",
-    };
-    await publishEmail(amqp, emailData);
-    res.create(logoutResponse).success().send();
-  })
-);
 export default router;

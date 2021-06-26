@@ -36,7 +36,7 @@ export default (params) => async (req, res, next) => {
   const serviceName = _.get(registry, "service_down.name", "");
   const thresholdValue = await getThresholdValue(redisConnection, serviceName);
 
-  // if not found in cache that mean service is up and remove service name from registry
+  // if not found in cache that mean service has been up and then we've to remove down service name from registry
   if (!thresholdValue) {
     updateRegistry();
   }

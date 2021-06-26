@@ -1,7 +1,7 @@
 import express from "express";
 import { config } from "./config";
 import { connectToRMQ } from "./src/utils/amqpConnection";
-import { execNotifyHandlers } from "./src/notificationResolvers";
+import { execNotifyHandlers } from "./src/notificationHandlers";
 
 const app = express();
 
