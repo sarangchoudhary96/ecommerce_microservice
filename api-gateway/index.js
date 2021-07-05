@@ -1,7 +1,6 @@
 import express from "express";
 import config from "./src/config";
 import tokenValidator from "./src/utils/tokenValidator";
-import circuitBreaker from "./src/utils/circuitBreaker";
 import routes from "./src/routes/routes";
 import upgradeResponse from "./src/utils/responseConstructor";
 import redisClient from "./src/client";
@@ -32,10 +31,6 @@ app.use("*", (req, res, next) => {
     asyncHandler(tokenValidator({})),
     pathToBeIgnoredForTokenValidation
   )(req, res, next);
-});
-
-app.use("*", (req, res, next) => {
-  asyncHandler(circuitBreaker({}))(req, res, next);
 });
 
 app.get("/api/apigateway", (req, res) => {
