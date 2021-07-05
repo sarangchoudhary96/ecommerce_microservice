@@ -10,6 +10,27 @@ export default {
         throw new QueryIncompletionError(e);
       });
     },
+
+    fetchUserInfoByEmailOruserName: async (
+      { sequelize },
+      { params, models }
+    ) => {
+      const { UserModel, UserEmailModel } = models;
+      const { username, userEmail: email } = params;
+
+      return UserModel.findOne({
+        include: [
+          {
+            model: UserEmailModel,
+            required: true,
+            where: { ...(email && { email }) },
+          },
+        ],
+        where: { ...(username && { username }) },
+      }).catch((e) => {
+        throw new QueryIncompletionError(e);
+      });
+    },
   },
 
   Mutations: {
@@ -74,6 +95,55 @@ export default {
             status: true,
             user_id: _.get(checkUserExist, "dataValues.id"),
           };
+        })
+        .catch((e) => {
+          throw new QueryIncompletionError(e);
+        });
+    },
+
+    updateUserConfirmationToken: async ({ sequelize }, { params, models }) => {
+      const { UserModel } = models;
+      const { id, confirmation_token } = params;
+
+      return sequelize
+        .transaction(
+          async (transaction) =>
+            await UserModel.update(
+              {
+                confirmation_token,
+              },
+              {
+                where: { id },
+                transaction,
+              }
+            )
+        )
+        .catch((e) => {
+          throw new QueryIncompletionError(e);
+        });
+    },
+
+    updateUserPassword: async ({ sequelize }, { params, models }) => {
+      const { UserModel } = models;
+      const { confirmation_token, password } = params;
+
+      return sequelize
+        .transaction(
+          async (transaction) =>
+            await UserModel.update(
+              {
+                password,
+              },
+              {
+                where: { confirmation_token },
+                transaction,
+              }
+            )
+        )
+        .then((_) => {
+          return UserModel.findOne({
+            where: { confirmation_token },
+          });
         })
         .catch((e) => {
           throw new QueryIncompletionError(e);

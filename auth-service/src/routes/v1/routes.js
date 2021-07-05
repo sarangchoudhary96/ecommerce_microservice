@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import express from "express";
 import { v1 as uuidv1 } from "uuid";
 import { databaseServiceInterceptor } from "../../utils/interceptor";
@@ -150,6 +151,83 @@ router.post(
     const response = await databaseServiceInterceptor(params);
     const token = _.get(response, "token");
     res.create({ token }).success().send();
+  })
+);
+
+const isEmail = (email) => {
+  const regex =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return regex.test(String(email));
+};
+
+// validator required
+router.post(
+  "/forget/password",
+  asyncHandler(async (req, res) => {
+    const amqp = res.create().amqp;
+    const { userUniqueKey } = req.body;
+
+    const response = await databaseServiceInterceptor({
+      ...(!isEmail(userUniqueKey) && { username: userUniqueKey }),
+      ...(isEmail(userUniqueKey) && { useremail: userUniqueKey }),
+      query_name: "fetchUserInfoByEmailOruserName",
+    });
+
+    if (_.get(response, "id")) {
+      // create confirmation token
+      await databaseServiceInterceptor({
+        query_name: "updateUserConfirmationToken",
+        confirmation_token: crypto
+          .createHash("md5")
+          .update(secret)
+          .digest("hex"),
+        id: _.get(response, "id"),
+      });
+
+      // send email of link to user
+      sendEmailToUser(
+        amqp,
+        _.get(response, "user_email.email"),
+        "forgetpassword"
+      );
+    }
+
+    // final response
+    const result = {
+      status: !_.isEmpty(response),
+      message: _.isEmpty(response)
+        ? "user is not registered"
+        : "reset link has been sent to your email",
+    };
+
+    res.create(result).success().send();
+  })
+);
+
+// validator required
+router.post(
+  "/update/password",
+  asyncHandler(async (req, res) => {
+    const { password, confirmation_token } = req.body;
+
+    const response = await databaseServiceInterceptor({
+      query_name: "updateUserPassword",
+      confirmation_token,
+      password: passwordEncrypt(password),
+    });
+
+    await databaseServiceInterceptor({
+      query_name: "updateUserConfirmationToken",
+      confirmation_token: "",
+      id: _.get(response, "id"),
+    });
+
+    const result = {
+      status: true,
+      message: "password updated successfully",
+    };
+
+    res.create(result).success().send();
   })
 );
 

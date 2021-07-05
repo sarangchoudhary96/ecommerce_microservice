@@ -14,6 +14,7 @@ const User = (seq) =>
       password: Sequelize.STRING,
       gender: Sequelize.STRING,
       status: Sequelize.INTEGER,
+      confirmation_token: Sequelize.INTEGER,
     },
     {
       freezeTableName: true,
@@ -22,5 +23,13 @@ const User = (seq) =>
       underscored: false,
     }
   );
+
+export const makeAssociations = (models) => {
+  const { UserModel, UserEmailModel } = models;
+
+  UserModel.hasOne(UserEmailModel, {
+    foreignKey: "user_id",
+  });
+};
 
 export default User;

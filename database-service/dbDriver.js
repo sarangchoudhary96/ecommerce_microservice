@@ -13,7 +13,6 @@ export default new Sequelize("ecommerce", "root", "sarang", {
     connectTimeout: 15000, // inital connection establish timeout
   },
   timezone: "+05:30", // Timezone for your db
-  dialect: "mysql",
   port: 3306,
 });
 
@@ -29,6 +28,7 @@ export default new Sequelize("ecommerce", "root", "sarang", {
 //     `name` VARCHAR(255),
 //     username VARCHAR(255),
 //     `password` VARCHAR(255),
+//     `confirmation_token` VARCHAR(255),
 //     gender VARCHAR(255),
 //     `status` INT(6),
 //     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

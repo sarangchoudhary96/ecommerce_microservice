@@ -28,6 +28,10 @@ export const config = {
       from: "plenty100000@gmail.com",
       fromName: "ecommerce_app",
     },
+    forgetpassword: {
+      from: "plenty100000@gmail.com",
+      fromName: "ecommerce_app",
+    },
   },
   emailTemplates: {
     userRegister: {
@@ -41,6 +45,12 @@ export const config = {
     userLogout: {
       subject: "Logout Alert",
       text: "<h1>Logout Successful</h1>",
+    },
+    forgetpassword: {
+      subject: "Reset Password",
+      text: `<h1>Reset password using below given link</h1>
+             <h3>If this is not you, ignore this email</h3>
+             <p>click <a href="https://www.w3schools.com/">here</a> to reset your password</p>`,
     },
   },
 };
