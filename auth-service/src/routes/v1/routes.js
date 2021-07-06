@@ -1,8 +1,8 @@
+import _ from "lodash";
 import express from "express";
 import { v1 as uuidv1 } from "uuid";
 import { databaseServiceInterceptor } from "../../utils/interceptor";
 import asyncHandler from "../../utils/errorWrapper";
-import _ from "lodash";
 import {
   passwordDecrypt,
   passwordEncrypt,
@@ -144,7 +144,15 @@ const isEmail = (email) => {
   return regex.test(String(email));
 };
 
-// validator required
+const startTimer = (ttl, userId) => {
+  setTimeout(() => {
+    databaseServiceInterceptor({
+      query_name: "updateUserConfirmationToken",
+      id: userId,
+    });
+  }, ttl);
+};
+
 router.post(
   "/forget/password",
   forgetPasswordValidator,
@@ -172,6 +180,8 @@ router.post(
         _.get(response, "user_email.email"),
         "forgetpassword"
       );
+
+      startTimer(40000, _.get(response, "id")); // to expire password reset link
     }
 
     // final response
@@ -186,7 +196,6 @@ router.post(
   })
 );
 
-// validator required
 router.post(
   "/update/password",
   savePasswordValidator,
@@ -201,7 +210,6 @@ router.post(
 
     await databaseServiceInterceptor({
       query_name: "updateUserConfirmationToken",
-      confirmation_token: "",
       id: _.get(response, "id"),
     });
 
@@ -214,4 +222,21 @@ router.post(
   })
 );
 
+router.get(
+  "/forget/password/link/active",
+  asyncHandler(async (req, res) => {
+    const { confirmation_token } = req.body;
+
+    const response = await databaseServiceInterceptor({
+      query_name: "fetchUserInfo",
+      confirmation_token,
+    });
+
+    const result = {
+      active: !_.isEmpty(response),
+    };
+
+    res.create(result).success().send();
+  })
+);
 export default router;

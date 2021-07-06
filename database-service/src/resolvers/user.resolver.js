@@ -5,8 +5,13 @@ export default {
   Query: {
     fetchUserInfo: async ({ sequelize }, { params, models }) => {
       const { UserModel } = models;
-      const { username } = params;
-      return UserModel.findOne({ where: { username } }).catch((e) => {
+      const { username, confirmation_token } = params;
+      return UserModel.findOne({
+        where: {
+          ...(username && { username }),
+          ...(confirmation_token && { confirmation_token }),
+        },
+      }).catch((e) => {
         throw new QueryIncompletionError(e);
       });
     },
@@ -110,7 +115,7 @@ export default {
           async (transaction) =>
             await UserModel.update(
               {
-                confirmation_token,
+                confirmation_token: confirmation_token || "",
               },
               {
                 where: { id },
