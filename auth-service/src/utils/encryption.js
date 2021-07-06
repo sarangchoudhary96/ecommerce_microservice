@@ -1,7 +1,8 @@
 /* eslint-disable no-undef */
 import crypto from "crypto";
 import { config } from "../../config";
-const { algorithm } = config.passwordEncryption;
+
+const { algorithm, secret } = config.passwordEncryption;
 
 export const encrypt = ({ password, secret }) => {
   let iv = crypto.randomBytes(16);
@@ -23,4 +24,16 @@ export const decrypt = ({ password, secret }) => {
   decrypted = Buffer.concat([decrypted, decipher.final()]);
 
   return decrypted.toString();
+};
+
+export const passwordDecrypt = (password) => {
+  return decrypt({ password, secret });
+};
+
+export const passwordEncrypt = (password) => {
+  return encrypt({ password, secret });
+};
+
+export const getConfirmatiomToken = () => {
+  return crypto.createHash("md5").update(secret).digest("hex");
 };

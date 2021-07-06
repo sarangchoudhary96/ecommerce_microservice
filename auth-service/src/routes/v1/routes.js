@@ -1,38 +1,22 @@
-import crypto from "crypto";
 import express from "express";
 import { v1 as uuidv1 } from "uuid";
 import { databaseServiceInterceptor } from "../../utils/interceptor";
 import asyncHandler from "../../utils/errorWrapper";
 import _ from "lodash";
-import { decrypt, encrypt } from "../../utils/encryption";
-import { config } from "../../../config";
+import {
+  passwordDecrypt,
+  passwordEncrypt,
+  getConfirmatiomToken,
+} from "../../utils/encryption";
 import { MessageError } from "../../utils/error";
 import userloginValidator from "../../validators/userLogin.validator";
 import userRegisterValidator from "../../validators/userRegister.validator";
 import logoutValidator from "../../validators/logout.validator";
-import { publishEmail } from "../../utils/amqpPublisher";
+import forgetPasswordValidator from "../../validators/forgetPassword.validator";
+import savePasswordValidator from "../../validators/savePassword.validator";
+import { sendEmailToUser } from "../../communicationUtils/userCommunication";
 
-const secret = _.get(config, "passwordEncryption.secret", "");
 const router = express.Router();
-
-const passwordDecrypt = (password) => {
-  return decrypt({ password, secret });
-};
-
-const passwordEncrypt = (password) => {
-  return encrypt({ password, secret });
-};
-
-const sendEmailToUser = async (amqp, userEmail, emailType) => {
-  const emailData = {
-    to: [userEmail],
-    from: _.get(config, `fromEmails.${emailType}.from`),
-    from_name: _.get(config, `fromEmails.${emailType}.fromName`),
-    subject: _.get(config, `emailTemplates.${emailType}.subject`),
-    html: _.get(config, `emailTemplates.${emailType}.text`),
-  };
-  await publishEmail(amqp, emailData);
-};
 
 router.post(
   "/user/login",
@@ -163,13 +147,14 @@ const isEmail = (email) => {
 // validator required
 router.post(
   "/forget/password",
+  forgetPasswordValidator,
   asyncHandler(async (req, res) => {
     const amqp = res.create().amqp;
-    const { userUniqueKey } = req.body;
+    const { user_input } = req.body;
 
     const response = await databaseServiceInterceptor({
-      ...(!isEmail(userUniqueKey) && { username: userUniqueKey }),
-      ...(isEmail(userUniqueKey) && { useremail: userUniqueKey }),
+      ...(!isEmail(user_input) && { username: user_input }),
+      ...(isEmail(user_input) && { useremail: user_input }),
       query_name: "fetchUserInfoByEmailOruserName",
     });
 
@@ -177,10 +162,7 @@ router.post(
       // create confirmation token
       await databaseServiceInterceptor({
         query_name: "updateUserConfirmationToken",
-        confirmation_token: crypto
-          .createHash("md5")
-          .update(secret)
-          .digest("hex"),
+        confirmation_token: getConfirmatiomToken(),
         id: _.get(response, "id"),
       });
 
@@ -207,6 +189,7 @@ router.post(
 // validator required
 router.post(
   "/update/password",
+  savePasswordValidator,
   asyncHandler(async (req, res) => {
     const { password, confirmation_token } = req.body;
 

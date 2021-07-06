@@ -22,7 +22,7 @@ const Interceptor = (service) => (params, path) => {
       return response;
     })
     .catch((err) => {
-      return { service_down: "database" };
+      throw err;
     });
 };
 
