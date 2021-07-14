@@ -13,6 +13,7 @@
     "deepmerge": "^4.2.2",
     "express": "^4.17.1",
     "lodash": "^4.17.21",
+    "morgan": "^1.10.0",
     "mysql2": "^2.2.5",
     "nodemon": "^2.0.7",
     "sequelize": "^6.6.2"
