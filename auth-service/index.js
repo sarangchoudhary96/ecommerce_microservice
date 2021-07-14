@@ -1,4 +1,7 @@
 import express from "express";
+import morgan from "morgan";
+import fs from "fs";
+import path from "path";
 import v1routes from "./src/routes/v1/routes";
 import v2routes from "./src/routes/v2/routes";
 import {
@@ -20,6 +23,17 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, "access.log"),
+  {
+    flags: "a",
+  }
+);
+
+app.use(morgan("combined", { stream: accessLogStream }));
+app.use(morgan("dev"));
 
 async function main() {
   const amqpConnection = await connectToRMQ();

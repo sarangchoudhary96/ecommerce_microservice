@@ -1,4 +1,7 @@
 import express from "express";
+import morgan from "morgan";
+import fs from "fs";
+import path from "path";
 import sequelize from "./dbDriver";
 import config from "./config";
 import upgradeResponse from "./src/utils/responseConstructor";
@@ -22,6 +25,17 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, "access.log"),
+  {
+    flags: "a",
+  }
+);
+
+app.use(morgan("combined", { stream: accessLogStream }));
+app.use(morgan("dev"));
 
 const builtModels = models(sequelize);
 
